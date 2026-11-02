@@ -1,10 +1,40 @@
-export const profile = {
+export type Profile = {
+  name: string;
+  role: string[];
+  tagline: string;
+  location: string;
+  timezone: string;
+  bio: string;
+  avatar: string;
+  currentlyBuilding: string;
+  stats: { label: string; value: number }[];
+  skills: { frontend: string[]; backend: string[]; tools: string[] };
+  projects: {
+    slug: string;
+    title: string;
+    eyebrow: string;
+    description: string;
+    tags: string[];
+    image: string;
+    demo: string;
+    source: string;
+    number: string;
+  }[];
+  experience: { year: string; title: string; desc: string }[];
+  socials: { github: string; linkedin: string; whatsapp: string; email: string };
+  theme: "green" | "red";
+};
+
+export type Project = Profile["projects"][number];
+
+export const profile: Profile = {
   name: "Raka Pratama", // TODO: ganti dengan nama atau nickname Anda
   role: ["Full-Stack Developer", "Automation Builder", "Creative Technologist"], // TODO: sesuaikan peran
   tagline: "Merancang pengalaman digital yang terasa cepat, berguna, dan berkesan.", // TODO: ganti tagline
   location: "Jakarta, Indonesia", // TODO: ganti kota
   timezone: "Asia/Jakarta",
   bio: "Saya membangun produk digital dan automasi yang membantu ide bergerak lebih jauh. Berbekal rasa ingin tahu pada desain dan teknologi, saya menyukai proses mengubah masalah rumit menjadi pengalaman yang sederhana, cepat, dan menyenangkan.", // TODO: tulis bio Anda
+  avatar: "/images/avatar-placeholder.svg", // TODO: unggah foto profil melalui /admin
   currentlyBuilding: "Eksperimen automasi yang lebih manusiawi", // TODO: update hal yang sedang dikerjakan
   stats: [
     { label: "Tahun eksplorasi", value: 4 }, // TODO: sesuaikan angka
@@ -62,7 +92,5 @@ export const profile = {
     whatsapp: "https://wa.me/6281234567890", // TODO: ganti nomor WhatsApp
     email: "hello@example.com", // TODO: ganti alamat email
   },
-  theme: "green" as "green" | "red",
+  theme: "green",
 };
-
-export type Project = (typeof profile.projects)[number];

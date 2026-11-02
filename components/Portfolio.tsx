@@ -13,8 +13,10 @@ import { Projects } from "@/components/sections/Projects";
 import { Experience } from "@/components/sections/Experience";
 import { Contact } from "@/components/sections/Contact";
 import { Footer } from "@/components/sections/Footer";
+import { ProfileProvider } from "@/components/ProfileContext";
+import type { Profile } from "@/data/profile";
 
-export function Portfolio() {
+export function Portfolio({ profile }: { profile: Profile }) {
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
     document.documentElement.classList.toggle("reduced-motion", query.matches);
@@ -23,5 +25,5 @@ export function Portfolio() {
     return () => query.removeEventListener("change", update);
   }, []);
 
-  return <LenisProvider><Loader /><Effects /><ScrollProgress /><div className="letterbox-bar letterbox-top" aria-hidden="true" /><div className="letterbox-bar letterbox-bottom" aria-hidden="true" /><Navigation /><main><Hero /><About /><Skills /><Projects /><Experience /><Contact /></main><Footer /></LenisProvider>;
+  return <ProfileProvider value={profile}><LenisProvider><Loader /><Effects /><ScrollProgress /><div className="letterbox-bar letterbox-top" aria-hidden="true" /><div className="letterbox-bar letterbox-bottom" aria-hidden="true" /><Navigation /><main><Hero /><About /><Skills /><Projects /><Experience /><Contact /></main><Footer /></LenisProvider></ProfileProvider>;
 }

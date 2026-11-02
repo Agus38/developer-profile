@@ -3,12 +3,13 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { profile } from "@/data/profile";
+import { useProfile } from "@/components/ProfileContext";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export function Experience() {
+  const profile = useProfile();
   const section = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
 
@@ -19,7 +20,7 @@ export function Experience() {
       gsap.fromTo(".timeline-item", { opacity: 0.25, y: 28 }, { opacity: 1, y: 0, stagger: 0.18, duration: 0.7, ease: "power3.out", scrollTrigger: { trigger: ".timeline-list", start: "top 75%", end: "bottom 62%", scrub: 0.3 } });
     }, section);
     return () => ctx.revert();
-  }, [reduced]);
+  }, [profile.experience, reduced]);
 
   return <section className="section experience-section" id="experience" ref={section} aria-labelledby="experience-title">
     <div className="section-topline"><span className="section-index">04 / THE JOURNEY</span><span className="section-aside">A WORK IN PROGRESS</span></div>

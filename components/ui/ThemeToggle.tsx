@@ -2,16 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
+import { useProfile } from "@/components/ProfileContext";
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<"green" | "red">("green");
+  const profile = useProfile();
+  const [theme, setTheme] = useState<"green" | "red">(profile.theme);
 
   useEffect(() => {
     const saved = window.localStorage.getItem("portfolio-theme");
-    const next = saved === "red" ? "red" : "green";
+    const next = saved === "red" || saved === "green" ? saved : profile.theme;
     setTheme(next);
     document.documentElement.dataset.theme = next;
-  }, []);
+  }, [profile.theme]);
 
   const toggle = () => {
     const next = theme === "green" ? "red" : "green";

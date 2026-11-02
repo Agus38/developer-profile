@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowUpRight, Braces, Layers3, Wrench } from "lucide-react";
-import { profile } from "@/data/profile";
+import { useProfile } from "@/components/ProfileContext";
 
 const groups = [
   { key: "frontend" as const, title: "Interface & experience", code: "01", Icon: Layers3 },
@@ -10,6 +10,7 @@ const groups = [
 ];
 
 export function Skills() {
+  const profile = useProfile();
   const updateSpotlight = (event: React.MouseEvent<HTMLElement>) => {
     const bounds = event.currentTarget.getBoundingClientRect();
     event.currentTarget.style.setProperty("--mouse-x", `${event.clientX - bounds.left}px`);

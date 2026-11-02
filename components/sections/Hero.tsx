@@ -3,13 +3,15 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
-import { profile } from "@/data/profile";
+import { useProfile } from "@/components/ProfileContext";
 import { MagneticLink } from "@/components/ui/MagneticLink";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { formatTime } from "@/lib/utils";
 
 const ParticleField = dynamic(() => import("@/components/three/ParticleField"), { ssr: false, loading: () => null });
 
 export function Hero() {
+  const profile = useProfile();
   const reduced = useReducedMotion();
   const [roleIndex, setRoleIndex] = useState(0);
   const [clock, setClock] = useState("--:--");
@@ -19,14 +21,14 @@ export function Hero() {
     if (reduced) return;
     const id = window.setInterval(() => setRoleIndex((index) => (index + 1) % profile.role.length), 2600);
     return () => window.clearInterval(id);
-  }, [reduced]);
+  }, [profile.role, reduced]);
 
   useEffect(() => {
-    const update = () => setClock(new Intl.DateTimeFormat("en-GB", { timeZone: profile.timezone, hour: "2-digit", minute: "2-digit" }).format(new Date()));
+    const update = () => setClock(formatTime(profile.timezone));
     update();
     const id = window.setInterval(update, 30000);
     return () => window.clearInterval(id);
-  }, []);
+  }, [profile.timezone]);
 
   useEffect(() => {
     const deviceMemory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory;

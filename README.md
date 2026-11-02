@@ -1,6 +1,6 @@
 # Cinematic Developer Portfolio
 
-Portofolio developer one-page dengan nuansa sinematik gelap, pilihan tema Matrix Green / Crimson Red, motion berbasis scroll, dan halaman detail proyek. Dibangun dengan Next.js App Router, TypeScript, Tailwind CSS, Framer Motion, GSAP + ScrollTrigger, Lenis, React Three Fiber, Drei, dan Lucide.
+Portofolio developer sinematik dengan panel admin yang dapat mengubah profil, foto, keahlian, pengalaman, proyek, tautan sosial, dan tema. Perubahan disimpan di Supabase dan langsung dipakai situs publik. Dibangun memakai Next.js App Router, TypeScript, Tailwind CSS, Framer Motion, GSAP + ScrollTrigger, Lenis, React Three Fiber, dan Supabase Auth/Storage.
 
 ## Jalankan lokal
 
@@ -9,33 +9,55 @@ npm install
 npm run dev
 ```
 
-Buka [http://localhost:3000](http://localhost:3000). Perintah `npm run build` menghasilkan build production; `npm start` menjalankannya.
+Buka [http://localhost:3000](http://localhost:3000). Jika Supabase belum dikonfigurasi, halaman publik memakai data fallback di `data/profile.ts`; `/admin` akan menampilkan petunjuk setup.
 
-## Personalisasi
+## Setup Supabase
 
-Semua konten personal berada di `data/profile.ts`. Ganti nama, peran, bio, angka, daftar skills, proyek, pengalaman, sosial, email, lokasi, dan timezone. Ganti aset proyek di `public/images/` serta URL `example.com` di `app/layout.tsx`, `app/sitemap.ts`, dan `app/robots.ts`.
+1. Buat project di [Supabase](https://supabase.com/dashboard).
+2. Buka **Authentication → Providers / Sign In**, aktifkan Email, dan nonaktifkan public sign-ups. Buat satu user admin dari **Authentication → Users → Add user**.
+3. Buka **SQL Editor**, jalankan seluruh isi `supabase/schema.sql`. Ini membuat tabel dengan Row Level Security dan bucket gambar publik `profile-assets`.
+4. Daftarkan user admin dengan SQL berikut, ganti alamat email:
 
-Tema awal ditentukan oleh `profile.theme`. Pengunjung juga dapat berganti tema menggunakan kontrol di header; pilihan mereka disimpan pada browser.
+   ```sql
+   insert into public.site_admins (user_id)
+   select id from auth.users where email = lower('email-anda@domain.com')
+   on conflict (user_id) do nothing;
+   ```
+
+   Pastikan query menambahkan satu baris. Tabel profil akan dibuat saat Anda menekan **Simpan perubahan** pertama kali.
+5. Salin `.env.example` menjadi `.env.local`, lalu isi `NEXT_PUBLIC_SUPABASE_URL` dan `NEXT_PUBLIC_SUPABASE_ANON_KEY` dari **Project Settings → API**. Jangan gunakan atau publikasikan `service_role` key.
+6. Jalankan ulang `npm run dev`, buka `/admin`, lalu masuk menggunakan user admin yang dibuat di langkah 2.
+
+## Panel admin
+
+- `/admin` meminta sesi Supabase Auth; belum login akan diarahkan ke `/admin/login`.
+- **Profil & tampilan** mengedit nama, foto, role, tagline, lokasi, bio, statistik now-building, dan tema.
+- **Konten & proyek** mengedit statistik, skills, pengalaman, serta detail proyek.
+- **Tautan sosial** mengedit email, GitHub, LinkedIn, dan WhatsApp.
+- Foto profil diunggah ke Supabase Storage. Format yang diterima JPG, PNG, WebP, atau AVIF, maksimal 5 MB.
+- Akses tulis diperiksa di database, bukan hanya disembunyikan di UI. Hanya user pada `site_admins` yang dapat menyimpan konten atau mengunggah gambar.
 
 ## Environment variable
 
-Tidak ada variabel environment yang diwajibkan. Form kontak menggunakan fallback `mailto:` dan tidak menyimpan data form. `.env.example` memuat contoh opsional jika kelak Anda menambahkan endpoint Resend (`RESEND_API_KEY`, `CONTACT_EMAIL`).
+| Variable | Wajib | Keterangan |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Untuk admin | URL project Supabase |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Untuk admin | Public anon/publishable key; keamanan tulis tetap ditentukan RLS |
+
+Jangan menaruh `service_role` key dalam aplikasi browser atau variabel `NEXT_PUBLIC_*`. Form kontak tetap memakai fallback `mailto:` dan tidak menyimpan pesan.
 
 ## Deploy ke Vercel
 
-1. Push folder ini ke repository GitHub.
-2. Di Vercel pilih **Add New Project**, lalu import repository.
-3. Gunakan pengaturan build default Next.js dan pilih **Deploy**. Tidak ada env var wajib.
-4. Untuk domain sendiri, buka **Project → Settings → Domains**, tambahkan domain, lalu ikuti instruksi DNS Vercel. Setelah itu perbarui URL `example.com` di metadata, sitemap, dan robots.
+1. Push repository ini ke GitHub dan import ke Vercel.
+2. Di **Project → Settings → Environment Variables**, tambahkan `NEXT_PUBLIC_SUPABASE_URL` dan `NEXT_PUBLIC_SUPABASE_ANON_KEY` untuk Production, Preview, dan Development sesuai kebutuhan.
+3. Redeploy setelah mengisi variable. Pastikan URL redirect Supabase Auth mengizinkan domain Vercel dan domain kustom Anda.
+4. Buka `https://domain-anda/admin` dan masuk.
+5. Tambahkan domain melalui **Project → Settings → Domains**, lalu perbarui URL `example.com` di `app/layout.tsx`, `app/sitemap.ts`, dan `app/robots.ts`.
 
-## Aksesibilitas dan motion
+## Pemeriksaan sebelum rilis
 
-Animasi yang berat, Lenis, cursor khusus, dan canvas 3D dinonaktifkan atau dikurangi pada `prefers-reduced-motion` / perangkat sentuh. Horizontal project reel hanya dipin pada layar desktop; di mobile ia menjadi strip swipe horizontal. Intro hanya muncul sekali per sesi dan bisa dilewati.
-
-## Checklist sebelum rilis
-
-- [ ] Ganti semua data `TODO` di `data/profile.ts` dan URL domain contoh.
-- [ ] `npm run build` lolos.
-- [ ] Uji layout pada lebar 360px, 768px, 1280px, dan 1920px.
-- [ ] Uji navigasi keyboard, command palette (`Ctrl/Cmd + K`), dan `prefers-reduced-motion`.
-- [ ] Verifikasi tautan sosial, email, proyek, metadata, dan Lighthouse setelah deploy.
+- [ ] Ganti konten contoh di `data/profile.ts` atau edit langsung melalui `/admin` setelah Supabase tersambung.
+- [ ] Pastikan public sign-ups nonaktif dan hanya akun Anda tercantum pada `site_admins`.
+- [ ] Isi Environment Variables di Vercel; jangan commit `.env.local`.
+- [ ] `npx tsc --noEmit`, `npm run lint`, dan `npm run build`.
+- [ ] Uji panel admin, upload gambar, tampilan mobile, keyboard, dan `prefers-reduced-motion`.

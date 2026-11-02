@@ -2,9 +2,10 @@
 
 import { FormEvent, useState } from "react";
 import { ArrowDownRight, ArrowUpRight, Check, Github, Linkedin, Send } from "lucide-react";
-import { profile } from "@/data/profile";
+import { useProfile } from "@/components/ProfileContext";
 
 export function Contact() {
+  const profile = useProfile();
   const [status, setStatus] = useState<"idle" | "sent">("idle");
 
   const submit = (event: FormEvent<HTMLFormElement>) => {

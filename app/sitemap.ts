@@ -1,7 +1,10 @@
 import type { MetadataRoute } from "next";
-import { profile } from "@/data/profile";
+import { getPublicProfile } from "@/lib/supabase/server";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const revalidate = 0;
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const profile = await getPublicProfile();
   const base = "https://example.com"; // TODO: ganti dengan domain Anda
   return [
     { url: base, lastModified: new Date(), changeFrequency: "monthly", priority: 1 },

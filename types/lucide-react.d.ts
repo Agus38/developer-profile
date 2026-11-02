@@ -10,14 +10,24 @@ declare module "lucide-react" {
   export const ArrowUpRight: IconComponent;
   export const Braces: IconComponent;
   export const Check: IconComponent;
+  export const CircleAlert: IconComponent;
   export const Command: IconComponent;
+  export const ExternalLink: IconComponent;
   export const Github: IconComponent;
+  export const ImagePlus: IconComponent;
+  export const KeyRound: IconComponent;
   export const Layers3: IconComponent;
   export const Linkedin: IconComponent;
+  export const LoaderCircle: IconComponent;
+  export const LogOut: IconComponent;
   export const Moon: IconComponent;
   export const MoveUpRight: IconComponent;
+  export const Plus: IconComponent;
+  export const Save: IconComponent;
   export const Search: IconComponent;
   export const Send: IconComponent;
   export const Sun: IconComponent;
+  export const Trash2: IconComponent;
+  export const UploadCloud: IconComponent;
   export const Wrench: IconComponent;
 }
